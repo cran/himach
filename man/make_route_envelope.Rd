@@ -30,7 +30,7 @@ aircraft can reach from a given airport.
 }
 \examples{
 # Need aircraft and airport datasets
-ac <- make_aircraft()
+ac <- make_aircraft(warn = FALSE)
 ap <- make_airports()
 z <- make_route_envelope(ac[1,], make_AP2("EGLL","KJFK",ap))
 

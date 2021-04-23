@@ -22,8 +22,8 @@ library(rnaturalearthdata)
 # this works even better if your source file has a date embedded in the name
 # attr(aircraft, "aircraftSet") <- "aircraft.csv"
 
-# example if you have no data of your own
-aircraft <- make_aircraft()
+# example if you have no data of your own - know that this will use default, so turn off warning
+aircraft <- make_aircraft(warn = FALSE)
 
 
 ## ----define airports----------------------------------------------------------
@@ -46,6 +46,10 @@ refuel_ap <- airports %>%
 # NZ_shp <- sf::read_sf("...../territorial-authority-2020-clipped-generalised.shp")
 # NZ_coast <- NZ_shp %>% sf::st_simplify(dTolerance = 1000) %>% sf::st_union()
 # NZ_buffer30 <- NZ_coast %>% sf::st_buffer(30 * 1000) %>% sf::st_union()
+
+# get test datasets
+NZ_coast <- hm_get_test("coast")
+NZ_buffer30 <- hm_get_test("buffer")
 
 # The in-built test maps are already in crs_Pacific
 # All that remains is to illustrate the land and buffer

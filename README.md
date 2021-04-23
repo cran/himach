@@ -1,6 +1,7 @@
 # himach
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/himach)](https://CRAN.R-project.org/package=himach)
 [![Codecov test coverage](https://codecov.io/gh/david6marsh/himach/branch/main/graph/badge.svg)](https://codecov.io/gh/david6marsh/himach?branch=main)
 <!-- badges: end -->
 
@@ -14,7 +15,13 @@ It is not an operational tool. Please don't fly these routes, which do not allow
 
 ## Installation
 
-You can install the current version of `himach` from github with:
+You can install the latest CRAN release using:
+
+```r
+install.packages("himach")
+```
+
+You can install the current development version of `himach` from github with:
 
 ``` r
 install.packages("devtools")

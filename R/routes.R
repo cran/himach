@@ -170,8 +170,11 @@ emptyRoute <- function(ac, ap2, fat_map,
 #'
 #' @examples
 #' # need to load some of the built-in data
-#' aircraft <- make_aircraft()
+#' aircraft <- make_aircraft(warn = FALSE)
 #' airports <- make_airports(crs = crs_Pacific)
+#' # get test datasets
+#' NZ_buffer30 <- hm_get_test("buffer")
+#' NZ_grid <- hm_get_test("grid")
 #'
 #' options("quiet" = 4) #for heavy reporting
 #' # from Auckland to Christchurch
@@ -275,8 +278,11 @@ find_routes <- function(ac_ids, ap2_ids, aircraft, airports, ...){
 #'
 #' @examples
 #' # need to load some of the built-in data
-#' aircraft <- make_aircraft()
+#' aircraft <- make_aircraft(warn = FALSE)
 #' airports <- make_airports(crs = crs_Pacific)
+#' # get test datasets
+#' NZ_buffer30 <- hm_get_test("buffer")
+#' NZ_grid <- hm_get_test("grid")
 #'
 #' options("quiet" = 4) #for heavy reporting
 #' # from Auckland to Christchurch
@@ -860,8 +866,11 @@ pathToGC <- function(path, route_grid,
 #'
 #' @examples
 #' # need to load some of the built-in data
-#' aircraft <- make_aircraft()
+#' aircraft <- make_aircraft(warn = FALSE)
 #' airports <- make_airports(crs = crs_Pacific)
+#' # get test datasets
+#' NZ_buffer30 <- hm_get_test("buffer")
+#' NZ_grid <- hm_get_test("grid")
 #'
 #' options("quiet" = 4) #for heavy reporting
 #' # from Auckland to Christchurch
@@ -1153,7 +1162,7 @@ find_leg_really <- function(ac, ap2, route_grid, fat_map,
 #'
 #' @examples
 #' # Need aircraft and airport datasets
-#' ac <- make_aircraft()
+#' ac <- make_aircraft(warn = FALSE)
 #' ap <- make_airports()
 #' z <- make_route_envelope(ac[1,], make_AP2("EGLL","KJFK",ap))
 #'
@@ -1307,6 +1316,7 @@ smoothSpeed <- function(r, ac){
 #' # here we use a built-in set of routes
 #' # see vignette for more details of how to obtain it
 #' airports <- make_airports(crs = crs_Pacific)
+#' NZ_routes <- hm_get_test("route")
 #' sumy <- summarise_routes(NZ_routes, airports)
 #'
 #' @export
@@ -1320,7 +1330,7 @@ summarise_routes <- function(routes,
     mutate(gcdist_km = make_AP2(substr(first(.data$routeID),1,4),
                                     substr(first(.data$routeID),7,10),
                                     ap_loc)$gcdist_km,
-           M084_h = round(.data$gcdist_km/(0.85 * mach_kph),2) + arrdep_h,
+           M084_h = round(.data$gcdist_km/(0.84 * mach_kph),2) + arrdep_h,
            gcdist_km = round(.data$gcdist_km,1)) %>%
     group_by(.data$timestamp, .data$fullRouteID, .data$routeID, .data$refuel_ap,
              .data$acID, .data$acType, .data$M084_h, .data$gcdist_km) %>%

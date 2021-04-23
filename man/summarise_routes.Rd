@@ -57,6 +57,7 @@ against actual and is reasonable (observed range roughly 0.3-0.5).
 # here we use a built-in set of routes
 # see vignette for more details of how to obtain it
 airports <- make_airports(crs = crs_Pacific)
+NZ_routes <- hm_get_test("route")
 sumy <- summarise_routes(NZ_routes, airports)
 
 }

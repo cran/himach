@@ -12,13 +12,18 @@ library(ggplot2)
 library(sp)
 library(sf)
 
+# and we'll load a full set of test data
+NZ_coast <- hm_get_test("coast")
+NZ_buffer30 <- hm_get_test("buffer")
+NZ_Buller_buffer40 <- hm_get_test("nofly")
+NZ_grid <- hm_get_test("grid")
+NZ_routes <- hm_get_test("route")
 
 ## ----cache saving-------------------------------------------------------------
 hm_clean_cache() #start without cache
 
 # need to load some of the built-in data for this example
 aircraft <- make_aircraft(warn = FALSE)
-NZ_buffer_Pac <- sf::st_transform(NZ_buffer30, crs=crs_Pacific)
 airports <- make_airports(crs = crs_Pacific)
 
 options("quiet"= 2) # for a little reporting
@@ -26,7 +31,7 @@ options("quiet"= 2) # for a little reporting
 system.time(
   routes <- find_route(aircraft[1, ],
                        make_AP2("NZAA", "NZDN", airports),
-                       fat_map = NZ_buffer_Pac,
+                       fat_map = NZ_buffer30,
                        route_grid = NZ_grid,
                        ap_loc = airports)
 )
@@ -46,14 +51,14 @@ hm_load_cache(full_filename)
 system.time(
   routes <- find_route(aircraft[1, ],
                        make_AP2("NZAA", "NZDN", airports),
-                       fat_map = NZ_buffer_Pac,
+                       fat_map = NZ_buffer30,
                        route_grid = NZ_grid,
                        ap_loc = airports)
 )
 
 
 # if you want to see a map
-# map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer_Pac)
+# map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30)
 
 ## ----createBuffer-------------------------------------------------------------
 # using your own shp file 
@@ -66,9 +71,7 @@ system.time(
 
 # this uses data as in the previous code chunk
 aircraft <- make_aircraft(warn = FALSE)
-NZ_buffer_Pac <- sf::st_transform(NZ_buffer30, crs=crs_Pacific)
 airports <- make_airports(crs = crs_Pacific)
-
 
 # run the same route, but with the avoid region
 options("quiet"= 2) #just the progress bar
@@ -76,7 +79,7 @@ ac <- aircraft[c(1, 4), ]$id
 routes <- find_routes(ac, 
                       data.frame(ADEP = "NZAA", ADES = "NZDN"),
                       aircraft, airports,
-                      fat_map = NZ_buffer_Pac, 
+                      fat_map = NZ_buffer30, 
                       route_grid = NZ_grid,
                       cf_subsonic = aircraft[3,],
                       avoid = NZ_Buller_buffer40)
@@ -88,11 +91,11 @@ routes <- find_routes(ac,
 rtes <- summarise_routes(routes, airports)
 
 # draw a basic map
-map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer_Pac,
+map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30,
           avoid_map = NZ_Buller_buffer40)
 
 map_routes(NZ_coast, routes, show_route = "aircraft",
-           crs = crs_Pacific, fat_map = NZ_buffer_Pac,
+           crs = crs_Pacific, fat_map = NZ_buffer30,
           avoid_map = NZ_Buller_buffer40)
 
 

@@ -44,14 +44,14 @@ For more details see the help vignette:
 \code{vignette("SupersonicRouting", package = "himach")}
 }
 \examples{
-# do minimal version
-ac <- make_aircraft()
+# do minimal version (we know it will use the default so turn off warning)
+ac <- make_aircraft(warn = FALSE)
 
 # on-the-fly example
 ac <- data.frame(id = "test", type = "test aircraft",
                  over_sea_M = 2.0, over_land_M = 0.9, accel_Mpm = 0.2,
                  arrdep_kph = 300, range_km = 6000, stringsAsFactors=FALSE)
-ac <- make_aircraft(ac)
+ac <- make_aircraft(ac, warn = FALSE)
 
 \dontrun{
 # example for your own data

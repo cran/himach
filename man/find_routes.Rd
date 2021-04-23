@@ -36,8 +36,11 @@ For more details see \code{\link{find_route}}
 }
 \examples{
 # need to load some of the built-in data
-aircraft <- make_aircraft()
+aircraft <- make_aircraft(warn = FALSE)
 airports <- make_airports(crs = crs_Pacific)
+# get test datasets
+NZ_buffer30 <- hm_get_test("buffer")
+NZ_grid <- hm_get_test("grid")
 
 options("quiet" = 4) #for heavy reporting
 # from Auckland to Christchurch

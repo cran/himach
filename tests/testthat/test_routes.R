@@ -1,5 +1,13 @@
 library(dplyr)
 
+NZ_coast <- hm_get_test("coast")
+NZ_buffer30 <- hm_get_test("buffer")
+NZ_Buller_buffer40 <- hm_get_test("nofly")
+NZ_grid <- hm_get_test("grid")
+NZ_routes <- hm_get_test("route")
+old_tolerance <- testthat::testthat_tolerance()
+testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
+
 test_that("Route envelope", {
   ac <- make_aircraft(warn = FALSE)
   ap <- make_airports()
@@ -17,8 +25,8 @@ test_that("Route summary", {
   ap <- make_airports(crs=crs_Pacific)
   rs1 <- summarise_routes(NZ_routes, ap)
   expect_equal(rs1[1, ]$refuel_ap, "NZWN")
-  expect_equal(rs1[2, ]$M084_h, 1.68)
-  expect_equal(rs1[2, ]$advantage_h, -0.88)
+  expect_equal(rs1[2, ]$M084_h, 1.69)
+  expect_equal(rs1[2, ]$advantage_h, -0.87)
   expect_equal(rs1[3, ]$sea_dist_frac, 0.70)
   expect_equal(rs1[4, ]$n_phases, 5)
   expect_equal(rs1[2, ]$n_accel, 2)
@@ -72,7 +80,7 @@ test_that("find_route works with subsonic option",{
                        ap_loc = airports,
                        cf_subsonic = aircraft[3, ]) %>%
     select(-timestamp) %>%
-      slice(c(1, 3, 8)) %>%  # for a small sample
+      filter(to %in% c(1920, 958, 1919)) %>%  # for a small sample
       # wkt is machine-dependent so just extract length/area
       mutate(across(c(gc, crow), st_length)) %>%
       mutate(envelope = st_area(envelope))
@@ -113,7 +121,7 @@ test_that("Find multiple routes for multiple aircraft",{
                         route_grid = NZ_grid,
                         refuel = refuel_ap) %>%
     select(-timestamp) %>%
-      slice(c(4, 7, 25)) %>%  # for a small sample
+      filter(to %in% c(789, 2022) | gcdist_km == 0) %>%  # for a small sample
       # wkt is machine-dependent so just extract length/area
       mutate(across(c(gc, crow), st_length)) %>%
       mutate(envelope = st_area(envelope))
@@ -129,7 +137,7 @@ test_that("Find multiple routes for multiple aircraft",{
                           refuel = refuel_ap,
                           avoid = NZ_Buller_buffer40) %>%
       select(-timestamp) %>%
-      slice(c(2, 5, 12)) %>%  # for a small sample
+      filter(to %in% c(2202, 1171)) %>%  # for a small sample
       # wkt is machine-dependent so just extract length/area
       mutate(across(c(gc, crow), st_length)) %>%
       mutate(envelope = st_area(envelope))
@@ -147,3 +155,5 @@ test_that("Find multiple routes for multiple aircraft",{
 
   options("quiet" = old_quiet)
 })
+
+testthat::testthat_tolerance(old_tolerance)

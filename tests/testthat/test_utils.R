@@ -1,4 +1,7 @@
 
+old_tolerance <- testthat::testthat_tolerance()
+testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
+
 test_that("Default aircraft data loads", {
   expect_warning(make_aircraft())
   expect_known_value(make_aircraft(warn = FALSE), "known/ac_default_load")
@@ -46,7 +49,20 @@ test_that("Airport data loads", {
 
 })
 
+test_that("Reassert does nothing wrong", {
+  # 4 test sets should use crs_Pacific, one crs_longlat
+  # really want to test crs, but wkt is machine dependent
+  expect_equal(sf::st_area(himach:::NZ_coast),
+                   sf::st_area(hm_get_test("coast")))
+  # test one segment
+  expect_equal(sf::st_length(himach:::NZ_routes$gc[1]),
+                   sf::st_length(hm_get_test("route")$gc[1]))
+})
+
 test_that("NZ maps available", {
+  NZ_coast <- hm_get_test("coast")
+  NZ_buffer30 <- hm_get_test("buffer")
+
   expect_true(all(st_is(NZ_coast, c("POLYGON", "MULTIPOLYGON"))))
   expect_true(all(st_is(NZ_buffer30, c("POLYGON", "MULTIPOLYGON"))))
 })
@@ -82,3 +98,5 @@ test_that("can rename in an environment", {
                             in_env = test_env)
   expect_equal(get("robbery", envir = test_env), 5)
 })
+
+testthat::testthat_tolerance(old_tolerance)
