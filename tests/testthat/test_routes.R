@@ -1,12 +1,26 @@
 library(dplyr)
+library(sf)
 
 NZ_coast <- hm_get_test("coast")
 NZ_buffer30 <- hm_get_test("buffer")
 NZ_Buller_buffer40 <- hm_get_test("nofly")
 NZ_grid <- hm_get_test("grid")
 NZ_routes <- hm_get_test("route")
-old_tolerance <- testthat::testthat_tolerance()
-testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
+
+# quick summary for test purposes
+summarise_routes_for_test <- function(r){
+  r %>%
+    # wkt is machine-dependent so just extract length/area
+    mutate(across(c(gc, crow), st_length),
+         gc_length = gc) %>%
+    mutate(envelope = st_area(envelope)) %>%
+    sf::st_drop_geometry() %>%
+    group_by(fullRouteID) %>%
+    # test on key outputs, not on detail of table
+    summarise(across(c(time_h, gc_length, crow, envelope), sum, na.rm = TRUE)) %>%
+    # and round to 3 sig figs
+    mutate(across(c(time_h, gc_length, crow, envelope), signif, 3))
+}
 
 test_that("Route envelope", {
   ac <- make_aircraft(warn = FALSE)
@@ -79,14 +93,11 @@ test_that("find_route works with subsonic option",{
                        route_grid = NZ_grid,
                        ap_loc = airports,
                        cf_subsonic = aircraft[3, ]) %>%
-    select(-timestamp) %>%
-      filter(to %in% c(1920, 958, 1919)) %>%  # for a small sample
-      # wkt is machine-dependent so just extract length/area
-      mutate(across(c(gc, crow), st_length)) %>%
-      mutate(envelope = st_area(envelope))
+       summarise_routes_for_test()
   ))
   # test a couple of rows
-  expect_known_value(routes, "known/test_route_subsonic_NZGS_NZDN")
+  expect_known_value(routes, "known/test_route_subsonic_NZGS_NZDN",
+                     tolerance = 0.05)
 
   # and test saving of cache
   tmp_dir <- tempdir()
@@ -120,14 +131,11 @@ test_that("Find multiple routes for multiple aircraft",{
                         fat_map = NZ_buffer30,
                         route_grid = NZ_grid,
                         refuel = refuel_ap) %>%
-    select(-timestamp) %>%
-      filter(to %in% c(789, 2022) | gcdist_km == 0) %>%  # for a small sample
-      # wkt is machine-dependent so just extract length/area
-      mutate(across(c(gc, crow), st_length)) %>%
-      mutate(envelope = st_area(envelope))
+      summarise_routes_for_test()
   ))
   # just test a sample
-  expect_known_value(routes, "known/test_multiroute")
+  expect_known_value(routes, "known/test_multiroute",
+                     tolerance = 0.05)
 
   # and again with a no-fly zone - and just one AP2
   invisible(capture.output(
@@ -135,15 +143,12 @@ test_that("Find multiple routes for multiple aircraft",{
                           fat_map = NZ_buffer30,
                           route_grid = NZ_grid,
                           refuel = refuel_ap,
-                          avoid = NZ_Buller_buffer40) %>%
-      select(-timestamp) %>%
-      filter(to %in% c(2202, 1171)) %>%  # for a small sample
-      # wkt is machine-dependent so just extract length/area
-      mutate(across(c(gc, crow), st_length)) %>%
-      mutate(envelope = st_area(envelope))
+                          avoid = NZ_Buller_buffer40)  %>%
+      summarise_routes_for_test()
   ))
   # check one row from each route
-  expect_known_value(routes, "known/test_multiroute_nofly")
+  expect_known_value(routes, "known/test_multiroute_nofly",
+                     tolerance = 0.05)
 
   # check for faulty airports
   ap2 <- as.data.frame(matrix(c("ZZZZ", "NZAA", "NZCH", "NZAA"),
@@ -155,5 +160,3 @@ test_that("Find multiple routes for multiple aircraft",{
 
   options("quiet" = old_quiet)
 })
-
-testthat::testthat_tolerance(old_tolerance)

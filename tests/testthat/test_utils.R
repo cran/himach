@@ -1,7 +1,4 @@
 
-old_tolerance <- testthat::testthat_tolerance()
-testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
-
 test_that("Default aircraft data loads", {
   expect_warning(make_aircraft())
   expect_known_value(make_aircraft(warn = FALSE), "known/ac_default_load")
@@ -55,6 +52,7 @@ test_that("Reassert does nothing wrong", {
   expect_equal(sf::st_area(himach:::NZ_coast),
                    sf::st_area(hm_get_test("coast")))
   # test one segment
+  skip_on_cran()
   expect_equal(sf::st_length(himach:::NZ_routes$gc[1]),
                    sf::st_length(hm_get_test("route")$gc[1]))
 })
@@ -99,4 +97,3 @@ test_that("can rename in an environment", {
   expect_equal(get("robbery", envir = test_env), 5)
 })
 
-testthat::testthat_tolerance(old_tolerance)

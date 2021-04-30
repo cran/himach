@@ -4,7 +4,7 @@
 \alias{make_aircraft}
 \title{Make aircraft data from minimum dataset}
 \usage{
-make_aircraft(ac = NA, sound_kph = mach_kph, warn = TRUE)
+make_aircraft(ac = NA, sound_kph = himach::mach_kph, warn = TRUE)
 }
 \arguments{
 \item{ac}{Dataframe containing the minimum fields, or NA (default)}

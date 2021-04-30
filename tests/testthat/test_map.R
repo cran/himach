@@ -1,9 +1,6 @@
 library(dplyr)
 library(ggplot2)
 
-old_tolerance <- testthat::testthat_tolerance()
-testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
-
 # Hadley rules out hash as not helpful: https://groups.google.com/forum/#!msg/ggplot2/JEvC86l_otA/i7k0yTDt2_UJ
 # vdiffr says may not be useful for sf objects - which is everything here :-(
 
@@ -12,6 +9,7 @@ testthat::testthat_tolerance(5e-3) # relatively high tolerance for differences
 NZ_coast <- hm_get_test("coast")
 NZ_buffer30 <- hm_get_test("buffer")
 NZ_routes <- hm_get_test("route")
+NZ_Buller <- hm_get_test("nofly")
 
 test_that("Route mapping", {
   airports <- make_airports(crs = crs_Pacific, warn = FALSE)
@@ -28,8 +26,10 @@ test_that("Route mapping", {
   expect_true("ggplot" %in% class(z))
 
    # time advantage - auto calculated
+  # add a no-fly zone to test those lines - even if routes ignore it
  expect_silent(z <- map_routes(NZ_coast, NZ_routes,
-                                crs = crs_Pacific))
+                                crs = crs_Pacific,
+                               avoid_map = NZ_Buller))
  expect_true("ggplot" %in% class(z))
 
  # circuity - auto calculated - on crs_Atlantic
@@ -69,10 +69,9 @@ test_that("can make range envelope", {
                                                 airports,
                                                 envelope_points = 20) %>%
                        unlist(),
-                     "known/LFPG_envelope_20")
+                     "known/LFPG_envelope_20",
+                     tolerance = 0.05)
 
 })
 
 
-
-testthat::testthat_tolerance(old_tolerance)

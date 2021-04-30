@@ -645,10 +645,6 @@ pathToGC <- function(path, route_grid,
           phaseID = paste0(cumsum(.data$phaseChange),".")) %>%
         select(-.data$phaseChange)
     }
-    # debug find NA phase
-    if (any(is.na(p$phase))){
-      message("missing phase")
-    }
 
     if(getOption("quiet", default=0)>1) message(" Calculated phase changes")
     fat_map_s2 <- st_as_s2(fat_map) # do this conversion only once
@@ -1330,7 +1326,7 @@ summarise_routes <- function(routes,
     mutate(gcdist_km = make_AP2(substr(first(.data$routeID),1,4),
                                     substr(first(.data$routeID),7,10),
                                     ap_loc)$gcdist_km,
-           M084_h = round(.data$gcdist_km/(0.84 * mach_kph),2) + arrdep_h,
+           M084_h = round(.data$gcdist_km/(0.84 * himach::mach_kph),2) + arrdep_h,
            gcdist_km = round(.data$gcdist_km,1)) %>%
     group_by(.data$timestamp, .data$fullRouteID, .data$routeID, .data$refuel_ap,
              .data$acID, .data$acType, .data$M084_h, .data$gcdist_km) %>%
@@ -1348,7 +1344,7 @@ summarise_routes <- function(routes,
     mutate(advantage_h = .data$M084_h - .data$time_h,
            advantage_pct = round(.data$advantage_h / .data$M084_h, 3),
            circuity = round(.data$dist_km/.data$gcdist_km, 2) - 1,
-           ave_fly_speed_M = round(.data$dist_km / (.data$fly_time_h * mach_kph), 2),) %>%
+           ave_fly_speed_M = round(.data$dist_km / (.data$fly_time_h * himach::mach_kph), 2),) %>%
     # for non-routes, set more values to NA
     ungroup() %>%
     mutate_at(c("dist_km", "n_phases", "n_accel", "circuity"),

@@ -7,7 +7,7 @@
 map_routes(
   thin_map,
   routes = NA,
-  crs = crs_Atlantic,
+  crs = himach::crs_Atlantic,
   show_route = "time",
   fat_map = NA,
   avoid_map = NA,

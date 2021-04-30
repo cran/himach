@@ -4,7 +4,7 @@
 \alias{st_window}
 \title{Version of \code{st_transform} with view window to avoid dateline}
 \usage{
-st_window(m, crs = crs_Atlantic, longit_margin = 0.1)
+st_window(m, crs = himach::crs_Atlantic, longit_margin = 0.1)
 }
 \arguments{
 \item{m}{A map dataframe, ie of class \code{sf} and \code{data.frame}, or an

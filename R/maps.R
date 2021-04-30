@@ -2,7 +2,7 @@
 #
 # Functions for plotting nice maps of routes
 
-utils::globalVariables(c("crs_Atlantic"))
+# utils::globalVariables(c("crs_Atlantic"))
 
 #' Version of \code{st_transform} with view window to avoid dateline
 #'
@@ -43,7 +43,7 @@ utils::globalVariables(c("crs_Atlantic"))
 #' #   ggplot2::geom_sf()
 #'
 #' @export
-st_window <- function(m, crs = crs_Atlantic, longit_margin = 0.1){
+st_window <- function(m, crs = himach::crs_Atlantic, longit_margin = 0.1){
   # 'dateline' of the crs
   longit <- mod_long(long_cent(crs) + 180)
   long1 <- mod_long(longit + longit_margin)
@@ -74,6 +74,9 @@ plot_map <- function(msf,
 
 # achievable range from a point
 # not used for route finding
+#' @import sf
+#' @importFrom geosphere geodesic
+#' @importFrom sp CRS
 make_range_envelope <- function(ac, ap, ap_locs = make_airports(),
                           envelope_points=70){
   #range envelope shows how far from an airport you can go  with a given range
@@ -94,14 +97,14 @@ make_range_envelope <- function(ac, ap, ap_locs = make_airports(),
   geod <- geosphere::geodesic(geo_c, theta, dist)
 
   # convert to simple feature
-  pg <- st_multipoint(geod[,1:2]) %>%
-    st_sfc(crs=crs_longlat) %>%
-    st_cast('LINESTRING') %>%
-    st_cast('POLYGON') %>%
-    st_transform(cen_prj) %>%
+  pg <- sf::st_multipoint(geod[ ,1:2]) %>%
+    sf::st_sfc(crs = crs_longlat) %>%
+    sf::st_cast('LINESTRING') %>%
+    sf::st_cast('POLYGON') %>%
+    sf::st_transform(cen_prj) %>%
     # occasionally fails as self-intersection when later st_intersection
     # so this should solve that
-    st_make_valid()
+    sf::st_make_valid()
 }
 
 
@@ -168,7 +171,8 @@ make_range_envelope <- function(ac, ap, ap_locs = make_airports(),
 #'
 #' @export
 map_routes <- function(
-  thin_map, routes=NA, crs=crs_Atlantic, show_route="time",
+  thin_map, routes=NA, crs=himach::crs_Atlantic,
+  show_route="time",
   fat_map=NA, avoid_map=NA,
   ap_loc=NA, ap_col="darkblue", ap_size=0.4,
   crow=FALSE, crow_col="grey70", crow_size=0.2,
@@ -183,9 +187,6 @@ map_routes <- function(
   warn = FALSE
 ){
   (stopifnot(is.na(show_route) || show_route %in% c("speed","aircraft","time", "circuity")))
-
-  #only support crs_Atlantic for the moment
-  # stopifnot(st_crs(crs) == st_crs(crs_Atlantic))
 
   # remove the non-routes (have time = NA)
   # these are where refuelling was needed

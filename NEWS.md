@@ -1,3 +1,8 @@
+# himach 0.1.2
+
+* Tweak test for CRAN.
+* Fixed issue when using package functions without loading package.
+
 # himach 0.1.1
 
 * Fixing check errors on other platforms
