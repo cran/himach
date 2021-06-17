@@ -58,7 +58,7 @@ system.time(
 
 
 # if you want to see a map
-# map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30)
+# map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30, simplify_km = 2)
 
 ## ----createBuffer-------------------------------------------------------------
 # using your own shp file 
@@ -92,11 +92,13 @@ rtes <- summarise_routes(routes, airports)
 
 # draw a basic map
 map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30,
-          avoid_map = NZ_Buller_buffer40)
+          avoid_map = NZ_Buller_buffer40,
+          simplify_km = 2)
 
 map_routes(NZ_coast, routes, show_route = "aircraft",
            crs = crs_Pacific, fat_map = NZ_buffer30,
-          avoid_map = NZ_Buller_buffer40)
+          avoid_map = NZ_Buller_buffer40,
+          simplify_km = 2)
 
 
 ## ----buffers in s2, fig.width=7, eval = FALSE---------------------------------

@@ -20,6 +20,7 @@ map_routes(
   route_envelope = FALSE,
   bound = TRUE,
   bound_margin_km = 200,
+  simplify_km = 10,
   land_f = "grey90",
   buffer_f = "grey60",
   avoid_f = "grey80",
@@ -70,6 +71,9 @@ Default FALSE, "grey70", 0.2}
 box of the \code{routes}, with additional \code{bound_margin_km} in km
 (default 200)}
 
+\item{simplify_km}{Simplify the two maps to this scale before
+plotting (default 10).}
+
 \item{land_f, buffer_f, avoid_f}{fill colours for thin, fat and no-fly
 maps, default grey 90, 70 and 80, respectively}
 
@@ -93,7 +97,7 @@ or 1.}
 \item{warn}{if TRUE show some warnings (when defaults loaded) (default FALSE)}
 }
 \value{
-Dataframe with details of the leg
+A \code{ggplot}.
 }
 \description{
 \code{map_routes} plots routes, with many options
@@ -109,6 +113,15 @@ version, then discarded. Running \code{summarise_routes} to do this requires an
 airport dataset; if \code{is.na(ap_loc)} then this is not available, so a default set
 is used. You can turn on \code{warn} to see if this is happening, but by default it
 is silent.
+
+
+
+The time to compute the map may not be very different with \code{simplify_km}
+varying between 2km and 20km, but the time to plot on the screen, or
+\code{ggsave} to a file, is longer than the compute time. It is this latter
+time that's reduced by simplifying the maps. For single, or short routes, you
+can probably see the difference between 2km and 10km, so it's your choice to
+prefer speed or beauty.
 }
 \examples{
 #see introductory vignette

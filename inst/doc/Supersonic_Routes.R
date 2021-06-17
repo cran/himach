@@ -59,7 +59,10 @@ ggplot(NZ_buffer30) +
     theme_minimal()
 
 # a quicker way to do all of this is to use map_routes, with no routes
-map_routes(NZ_coast, fat_map = NZ_buffer30, crs = crs_Pacific)
+# by default map_routes simplifies maps to a coarse 10km step
+# for this small example we want something finer-grained
+map_routes(NZ_coast, fat_map = NZ_buffer30, crs = crs_Pacific,
+           simplify_km = 2)
 
 
 ## ----mapswiths2---------------------------------------------------------------
@@ -91,7 +94,10 @@ map_NZ_2k <- map_NZ %>%
 attr(map_NZ_2k, "simplify_m") <- 2000
 
 # example map, himach::map_routes but without any routes
-map_routes(map_NZ_2k, fat_map = NZ_plus30, crs = crs_Pacific)
+# by default map_routes simplifies maps to a coarse 10km step
+# for this small example we want something finer-grained
+map_routes(map_NZ_2k, fat_map = NZ_plus30, crs = crs_Pacific, 
+           simplify_km = 2)
 
 ## ----construct_grid-----------------------------------------------------------
 target_km <- 150
@@ -145,6 +151,6 @@ routes <- find_routes(ac, ap2, aircraft, airports,
 rtes <- summarise_routes(routes, airports)
 
 # draw a basic map
-map_routes(NZ_coast, routes, crs = crs_Pacific, fat_map = NZ_buffer30)
+map_routes(NZ_coast, routes, crs = crs_Pacific, fat_map =  NZ_buffer30, simplify_km = 2)
 
 
