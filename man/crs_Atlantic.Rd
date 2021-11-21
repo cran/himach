@@ -16,10 +16,11 @@ Atlantic-centred. Works for most analysis, but not recommended for N-region
 (eg New Zealand and Fiji), instead use \code{\link{crs_Pacific}}.
 }
 \details{
-crs_Atlantic is "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84
-+datum=WGS84 +units=m +no_defs"
+crs_Atlantic is "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84
++units=m +no_defs"
 }
 \seealso{
-\code{\link{crs_Pacific}}, \code{\link{crs_N}}, \code{\link{crs_S}}
+\code{\link{crs_Pacific}}, \code{\link{crs_120E}},
+  \code{\link{crs_N}}, \code{\link{crs_S}}
 }
 \keyword{datasets}

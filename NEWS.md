@@ -1,3 +1,9 @@
+# himach 0.2.2
+
+* Fixed crash when routing over very short hops (say for re-positioning flights).
+* (development) Bug fixes: map leakage solved, summarise_routes now works with 3-letter airport codes as well as 4 (though default is still ICAO codes, not IATA codes for airports).
+* Removed use of Travis for code coverage.
+
 # himach 0.2.1
 
 * Patch so that tests work ok with `sf` v1.0+.

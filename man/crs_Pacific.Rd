@@ -15,9 +15,11 @@ Coordinate reference system (CRS) for plotting and analysing maps.
 Pacific-centred.
 }
 \details{
-"+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+"+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m
++no_defs"
 }
 \seealso{
-\code{\link{crs_Atlantic}}, \code{\link{crs_N}}, \code{\link{crs_S}}
+\code{\link{crs_Atlantic}}, \code{\link{crs_120E}},
+  \code{\link{crs_N}}, \code{\link{crs_S}}
 }
 \keyword{datasets}

@@ -367,6 +367,7 @@ find_route <- function(ac, ap2, fat_map, avoid=NA, route_grid, cf_subsonic=NA,
       filter((.data$n_under_circ<2)|(.data$circuity < max_circuity))
 
     if (nrow(r_ap3) < 1) {
+      message(" ") #line break for formatting when the progress bar is being shown.
       message("No refuel options for ", ap2$AP2)
     } else {
       #simplify to distinct AP2 (there may be some duplicates, eg Heathrow-Gander appearing for -SFO & -LAX)
@@ -487,10 +488,13 @@ findToCToD <- function(ap, route_grid, fat_map, ac,
   #if cache doesn't exist, create it as a child of Global (so persists outside this function!)
   if ((attr(.hm_cache$star_cache,"map") != route_grid@name) ||
       (attr(.hm_cache$star_cache,"aircraftSet") != attr(ac,"aircraftSet"))) {
-    if (getOption("quiet", default=0)>0) message("Map or aircraft have changed, so clearing star cache.")
+    # if map = "" then already clean, so no need for message
+    if (getOption("quiet", default=0) > 0 &
+        attr(.hm_cache$star_cache,"map") != "") message("Map or aircraft have changed, so clearing star cache.")
     hm_clean_cache("star")
     attr(.hm_cache$star_cache,"map") <- route_grid@name
-    attr(.hm_cache$star_cache,"aircraftSet") <- attr(ac,"aircraftSet")}
+    attr(.hm_cache$star_cache,"aircraftSet") <- attr(ac,"aircraftSet")
+    }
 
   #cache the SID-STAR with data name which is the ACID, ap, ad_nearest & ad_dist_m.
   cache_as <- paste(ac$id, ap$APICAO, ad_nearest, ad_dist_m, sep="-")
@@ -893,9 +897,12 @@ find_leg <- function(ac, ap2, route_grid, fat_map, ap_loc,
   #can save and load the cache, with loadRDS readRDS
   #if cache doesn't match create it as a child of Global (so persists outside this function!)
   if ((attr(.hm_cache$route_cache,"map") != route_grid@name)) {
-    if (getOption("quiet", default=0)>0) message("Map used by grid has changed, so clearing route cache.")
+    # if map = "" then already empty so no need for message
+    if (getOption("quiet", default=0) > 0 &
+        attr(.hm_cache$route_cache,"map") != "") message("Map used by grid has changed, so clearing route cache.")
     hm_clean_cache("route") # empty cache
-    attr(.hm_cache$route_cache,"map") <- route_grid@name}
+    attr(.hm_cache$route_cache,"map") <- route_grid@name
+    }
 
   if (unidirectional) {
     #note we use a different separator here, but not < > which file systems might reject
@@ -992,6 +999,8 @@ find_leg_really <- function(ac, ap2, route_grid, fat_map,
 
     # v.v. if gcdist is small, reduce the range using max_leg_circuity
     ac$range_km <- min(ac$range_km, gcdist * max_leg_circuity)
+    # if range_km is now small relative to ad_dist, boost it to give room for ad
+    ac$range_km <- max(ac$range_km, 5 * ad_dist_m/1000)
     if (enforce_range) {
       #find route Envelope
       envelope <-  make_route_envelope(ac, ap2, ...) %>%
@@ -1323,8 +1332,8 @@ summarise_routes <- function(routes,
   route_summary <- routes %>%
     group_by(.data$routeID) %>%
     rename(segdist_km = .data$gcdist_km) %>%
-    mutate(gcdist_km = make_AP2(substr(first(.data$routeID),1,4),
-                                    substr(first(.data$routeID),7,10),
+    mutate(gcdist_km = make_AP2(stringr::str_split(first(.data$routeID), stringr::boundary("word"))[[1]][1],
+                                stringr::str_split(first(.data$routeID), stringr::boundary("word"))[[1]][2],
                                     ap_loc)$gcdist_km,
            M084_h = round(.data$gcdist_km/(0.84 * himach::mach_kph),2) + arrdep_h,
            gcdist_km = round(.data$gcdist_km,1)) %>%

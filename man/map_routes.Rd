@@ -20,7 +20,7 @@ map_routes(
   route_envelope = FALSE,
   bound = TRUE,
   bound_margin_km = 200,
-  simplify_km = 10,
+  simplify_km = 8,
   land_f = "grey90",
   buffer_f = "grey60",
   avoid_f = "grey80",

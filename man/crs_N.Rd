@@ -20,6 +20,6 @@ crs_N is EPSG3995
 }
 \seealso{
 \code{\link{crs_Atlantic}}, \code{\link{crs_Pacific}},
- \code{\link{crs_longlat}}, \code{\link{crs_S}}
+ \code{\link{crs_120E}}, \code{\link{crs_longlat}}, \code{\link{crs_S}}
 }
 \keyword{datasets}
