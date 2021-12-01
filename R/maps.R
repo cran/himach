@@ -2,7 +2,7 @@
 #
 # Functions for plotting nice maps of routes
 
-# utils::globalVariables(c("crs_Atlantic"))
+utils::globalVariables(c("crs_longlat"))
 
 #' Version of \code{st_transform} with view window to avoid dateline
 #'
@@ -89,7 +89,7 @@ make_range_envelope <- function(ac, ap, ap_locs = make_airports(),
   # use CRS centred on centre of route envelopes
   cen_prj <- sf::st_crs(paste0("+proj=laea +lat_0=", round(geo_c[2],1),
                             " +lon_0=", round(geo_c[1],1),
-                            " +x_0=4321000 +y_0=3210000 +ellps=GRS80 +datum=WGS84 +units=m +no_defs"))
+                            " +x_0=4321000 +y_0=3210000 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"))
   dist <- ac$range_km * 1000
   theta <- seq(0, 360, length.out = envelope_points)
 
@@ -97,9 +97,9 @@ make_range_envelope <- function(ac, ap, ap_locs = make_airports(),
 
   # convert to simple feature
   pg <- sf::st_multipoint(geod[ ,1:2]) %>%
-    sf::st_sfc(crs = crs_longlat) %>%
     sf::st_cast('LINESTRING') %>%
     sf::st_cast('POLYGON') %>%
+    sf::st_sfc(crs = crs_longlat) %>%
     sf::st_transform(cen_prj) %>%
     # occasionally fails as self-intersection when later st_intersection
     # so this should solve that

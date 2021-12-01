@@ -77,7 +77,8 @@ available rather than re-calculated. See
 management.
 }
 \examples{
-# need to load some of the built-in data
+# need to load some of the built-in data (not run)
+\dontrun{
 aircraft <- make_aircraft(warn = FALSE)
 airports <- make_airports(crs = crs_Pacific)
 # get test datasets
@@ -92,5 +93,5 @@ routes <- find_leg(aircraft[4,],
                     fat_map = NZ_buffer30,
                     route_grid = NZ_grid,
                     ap_loc = airports)
-
+}
 }

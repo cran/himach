@@ -279,10 +279,10 @@ find_routes <- function(ac_ids, ap2_ids, aircraft, airports, ...){
 #' @examples
 #' # need to load some of the built-in data
 #' aircraft <- make_aircraft(warn = FALSE)
-#' airports <- make_airports(crs = crs_Pacific)
 #' # get test datasets
 #' NZ_buffer30 <- hm_get_test("buffer")
 #' NZ_grid <- hm_get_test("grid")
+#' airports <- make_airports(crs = sf::st_crs(NZ_buffer30))
 #'
 #' options("quiet" = 4) #for heavy reporting
 #' # from Auckland to Christchurch
@@ -865,7 +865,8 @@ pathToGC <- function(path, route_grid,
 #' @import tidyr
 #'
 #' @examples
-#' # need to load some of the built-in data
+#' # need to load some of the built-in data (not run)
+#' \dontrun{
 #' aircraft <- make_aircraft(warn = FALSE)
 #' airports <- make_airports(crs = crs_Pacific)
 #' # get test datasets
@@ -880,7 +881,7 @@ pathToGC <- function(path, route_grid,
 #'                     fat_map = NZ_buffer30,
 #'                     route_grid = NZ_grid,
 #'                     ap_loc = airports)
-#'
+#' }
 #' @export
 find_leg <- function(ac, ap2, route_grid, fat_map, ap_loc,
                     avoid=NA, enforce_range=TRUE,

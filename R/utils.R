@@ -2,7 +2,14 @@
 # Private helper functions for 2speed package
 # that do not fit into the routes, grids or maps collections
 
-# utils::globalVariables(c("mach_kph", "crs_Pacific", "crs_longlat"))
+utils::globalVariables(c("crs_Pacific", "crs_longlat"))
+
+# extra questions for releasing the package
+release_questions <- function() {
+  c(
+    "Have you done check_rhub(platforms = c('solaris-x86-patched'), interactive = FALSE)"
+  )
+}
 
 # helper to put European names first - assumes 4-letter ICAO code
 isEur <- function(x) substr(x,1,1) %in% c("E","L")
@@ -236,7 +243,7 @@ make_aircraft <- function(ac = NA, sound_kph = himach::mach_kph, warn = TRUE){
 #' @importFrom dplyr %>%
 #'
 #' @export
-make_airports <- function(ap = NA, crs = himach::crs_longlat, warn = TRUE){
+make_airports <- function(ap = NA, crs = crs_longlat, warn = TRUE){
   if (!is.data.frame(ap)) {
     if (warn) message("Using default airport data: airportr::airport.")
     ap <- airportr::airports %>%
@@ -250,12 +257,14 @@ make_airports <- function(ap = NA, crs = himach::crs_longlat, warn = TRUE){
   if (length(miss_vbls) > 0) stop("Airport definition is missing: ",
                                   paste(miss_vbls, collapse = " "))
 
+ # check for old GDAL-solaris problem with CRS
+  if (is.na(crs)) stop("Destination crs is not defined: ", crs)
   ap %>%
     #convert to map feature
     # 4326 is a lat-long format, for input, then transform to required crs
     dplyr::mutate(ap_locs = st_transform(
       st_cast(st_sfc(
-        st_multipoint(matrix(c(.data$long, .data$lat),ncol=2)), crs = himach::crs_longlat),
+        st_multipoint(matrix(c(.data$long, .data$lat),ncol=2)), crs = crs_longlat),
         'POINT'), crs = crs))
 }
 
@@ -277,9 +286,10 @@ ren_subst <- function(ds,
 st_gcIntermediate <- function(crs, ...){
   #not vector-clever for n, which is (single) integer
   #starts with 4326 - any old lat long and then transform to the required crs
-  st_transform(
-    st_sfc(st_linestring(geosphere::gcIntermediate(...)), crs=4326),
-    crs)
+  geosphere::gcIntermediate(...) %>%
+    st_linestring() %>%
+    st_sfc(crs = crs_longlat) %>%
+    st_transform(crs)
 }
 
 
@@ -293,7 +303,7 @@ withProgress <- function(pb, f, ...){
 # normally this behaviour creates warnings so circumvent
 # but the warnings are there for a reason
 # so beware of the original crs changing!
-reassert_crs <- function(x, crs = himach::crs_Pacific){
+reassert_crs <- function(x, crs = crs_Pacific){
   suppressWarnings(x <- sf::st_set_crs(x, crs))
   return(x)
 }
@@ -337,7 +347,6 @@ reassert_crs <- function(x, crs = himach::crs_Pacific){
 hm_get_test <- function(item = c("coast", "buffer", "nofly", "grid", "route")){
   stopifnot(item %in% c("coast", "buffer", "nofly", "grid", "route"))
   item <- substr(item, 1, 1)
-  # these three are already crs_Pacific
   if (item == "c")  z <- reassert_crs(NZ_coast)
   if (item == "b")  z <- reassert_crs(NZ_buffer30)
   if (item == "n")  z <- reassert_crs(NZ_Buller_buffer40)

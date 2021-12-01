@@ -1,7 +1,7 @@
 Type: Package
 Package: himach
 Title: High Mach Finds Routes for Supersonic Aircraft
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: 
     c(person(given = "David",
            family = "Marsh",
@@ -30,9 +30,9 @@ LazyData: true
 Language: en-GB
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2021-11-21 16:14:23 UTC; david
+Packaged: 2021-12-01 05:42:07 UTC; david
 Author: David Marsh [aut, cre],
   EUROCONTROL [fnd, cph]
 Maintainer: David Marsh <david.marsh@eurocontrol.int>
 Repository: CRAN
-Date/Publication: 2021-11-21 16:40:02 UTC
+Date/Publication: 2021-12-01 06:10:02 UTC
