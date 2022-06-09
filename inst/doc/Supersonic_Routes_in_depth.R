@@ -59,6 +59,32 @@ system.time(
 # if you want to see a map
 # map_routes(NZ_coast, routes, crs_Pacific, fat_map = NZ_buffer30, simplify_km = 2)
 
+## ----cache housekeeping-------------------------------------------------------
+# for this example, add a second route to the cache
+routes <- find_route(aircraft[2, ],
+                       make_AP2("NZAA", "NZDN", airports),
+                       fat_map = NZ_buffer30,
+                       route_grid = NZ_grid,
+                       ap_loc = airports)
+# save the cache, which has NZAA-NZDN for 2 aircraft now
+hm_save_cache("test_v", NZ_grid, aircraft, path = tmp_dir)
+
+#now do housekeeping
+load(full_filename) # filename from the previous chunk
+ls(route_cache) # show the contents, just for information
+# we want to delete instances of aircraft with ID that includes 'M22'
+z <- ls(route_cache, pattern="M22") |> as.list()
+length(route_cache) # before deletion
+do.call(rm, z, envir = route_cache) # delete the M22 items
+length(route_cache) #after deletion, 1 less
+# then repeat for star_cache
+z <- ls(star_cache, pattern="M22") |> as.list()
+length(star_cache)
+do.call(rm, z, envir = star_cache)
+length(star_cache)
+# then save the result (you might want to change the filename, or backup the old cache beforehand)
+save("route_cache", "star_cache", file = full_filename)
+
 ## ----createBuffer-------------------------------------------------------------
 # using your own shp file 
 # NZ_Buller <- sf::read_sf("...../territorial-authority-2020-clipped-generalised.shp") %>% 

@@ -1,3 +1,9 @@
+# himach 0.3.0
+
+* New graphics options: in `map_routes` colour lines by a flight frequency variable or by number of accelerations to supersonic; now can also plot a simple speed/distance/time/altitude profile with `profile_routes`.
+* Added a section on cache housekeeping to the advanced vignette.
+* Bug fixes: Solved map 'leakage' at dateline, and `make_AP2` copes with vectors of airport pairs correctly now.
+
 # himach 0.2.3
 
 * Fixes for solaris running old GDAL: switch to storing crs_Atlantic etc as strings.
