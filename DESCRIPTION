@@ -1,7 +1,7 @@
 Type: Package
 Package: himach
 Title: High Mach Finds Routes for Supersonic Aircraft
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     c(person(given = "David",
            family = "Marsh",
@@ -26,18 +26,19 @@ Depends: R (>= 3.5.0)
 Imports: cppRouting, data.table, dplyr (>= 1.0.0), geosphere, ggplot2,
         lwgeom, purrr, s2, sf (>= 1.0), tidyr
 Suggests: airportr, cowplot, knitr, methods, progress, rmarkdown,
-        rnaturalearthdata, scales, stringr, testthat, units, utils,
-        viridis, covr, spelling
+        rnaturalearthdata, scales, stringr, testthat (>= 3.0), units,
+        utils, viridis, covr, spelling
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
-RoxygenNote: 7.1.2
+Config/testthat/edition: 3
+RoxygenNote: 7.2.2
 NeedsCompilation: no
-Packaged: 2022-06-09 09:57:27 UTC; david
+Packaged: 2022-12-05 09:15:45 UTC; david
 Author: David Marsh [aut, cre],
   Enrico Spinielli [ctb],
   EUROCONTROL [fnd, cph]
 Maintainer: David Marsh <david6marsh@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-06-09 22:40:09 UTC
+Date/Publication: 2022-12-05 09:30:02 UTC
