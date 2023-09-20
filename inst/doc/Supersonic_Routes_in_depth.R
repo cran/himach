@@ -85,6 +85,121 @@ length(star_cache)
 # then save the result (you might want to change the filename, or backup the old cache beforehand)
 save("route_cache", "star_cache", file = full_filename)
 
+## ----define_density_plot_fn---------------------------------------------------
+
+hm_latlong_density <- function(rt, # route dataset created earlier
+                               ll = "lat", #lat or long chart?
+                               # frequency data, either 1 or
+                               # dataset with at least 5 columns
+                               freq = 1, 
+                               # 2 for joining
+                               join_var = c("acID", "routeID"),
+                               # 1 for value
+                               freq_var = flights_w,
+                               freq_lab = "Hours per week",
+                               # and 2 for faceting
+                               facet_rows = vars(year), #or use NULL
+                               facet_cols = vars(scen_ord, acID),
+                               # other plot configuration elements
+                               bar_deg = 3, # width of bar plotted in degrees
+                               resolution_deg = 1, # granularity of analysis, keep small
+                               # ignore when flights are stationary (refuelling)
+                               drop_zero = TRUE,
+                               # return a graph, or a set of data
+                               return_data = FALSE){
+  # graph of lat or long?
+  sel_coord <- ifelse(ll |> 
+                        stringr::str_to_upper() |> 
+                        stringr::str_sub(1, 2) == "LA",
+                      2, 1)
+  coord_label <- ifelse(sel_coord == 2, "Latitude (deg)", "Longitude (deg)")
+  
+  rt <- rt |>
+    ungroup() |> #just in case supplied dataset is grouped
+    # standard route dataset will have all of these
+    # each row is a great circle segment
+    # in particular time_h is the flight time in hours for the segment
+    select(phase, phaseID, gc, acID, routeID, speed_kph, time_h, crow) |>
+    mutate(seg = row_number()) # note this is ungrouped
+  # this is a graph of flight time, so ignore time spent on the ground refuelling
+  if (drop_zero) rt <- rt |>
+    filter(speed_kph > 0)
+  
+  if (is.data.frame(freq)) {
+    # zoom in on the variables we need
+    freq <- freq |>
+      ungroup() |>
+      select(all_of(join_var), {{freq_var}}, scen_ord, year)
+    
+    rt <- rt |>
+      inner_join(freq, by = join_var, relationship = "many-to-many")
+  } else {
+    rt <- rt |>
+      mutate(flights_w = 1)
+    facet_rows <- NULL
+    facet_cols <- vars(acID)
+  }
+  
+  # split the great circle arcs into the graph resolution
+  rt <- rt |>
+    # ensure fine resolution
+    sf::st_segmentize(units::set_units(resolution_deg, degree)) |>
+    # drop the sf geometry, without dropping the gc column
+    sf::st_set_geometry("crow") |> # we only kept this to sacrifice it here
+    sf::st_drop_geometry() |>
+    group_by(across(!gc)) |> #don't want to lose any var in the reframe
+    # the reframe is to pull out either lat or long coordinate
+    reframe(coord = st_coordinates(gc)[ , sel_coord]) |>
+    group_by(across(any_of(c("seg", "scen_ord", "year")))) |> # now keep one entry per segment/resolution
+    # drop the last row if there's more than one, because we want to count line segments really
+    slice(1:max(1, n()-1)) |>
+    #round to the graph resolution
+    mutate(coord = resolution_deg * floor(coord / resolution_deg)) |>
+    distinct() |>
+    # time_h is the flight time in hours for the great circle segment
+    # now shared, after st_segmentize, amongst n() subsegments
+    mutate(time_h = {{freq_var}} * time_h / n(),
+           bar_coord = bar_deg * round(coord/bar_deg))
+  
+  # then use geom_bar to add up the times, across all flights
+  g <- ggplot(rt, aes(bar_coord,
+                      fill = phase,
+                      weight = time_h)) +
+    geom_bar()  +
+    facet_grid(rows = facet_rows, cols = facet_cols) +
+    labs(y = freq_lab, x = coord_label)
+  # orient appropriately for long or lat
+  if (sel_coord == 2) g <- g +
+    coord_flip()
+  
+  if (return_data) return(rt) else return(g)
+}
+
+## ----density_examples---------------------------------------------------------
+# simple case with default 1 flight/week frequency
+hm_latlong_density(NZ_routes, facet_rows = NULL, facet_cols = vars(acID),
+                   bar_deg = 0.5, resolution_deg = 0.1)
+
+# make up a forecast of frequencies
+freq_fc <- NZ_routes |> 
+  # get the ac & routes we need the forecast for
+  select(acID, routeID) |> 
+  st_drop_geometry() |> # convert from sf to tibble
+  distinct() |> 
+  # add in some forecast years
+  tidyr::crossing(tibble(year = c(2040L, 2050L))) |> 
+  # add in some scenarios
+  tidyr::crossing(tibble(scen_ord = ordered(c("low", "base", "high"), 
+                                            levels = c("low", "base", "high")))) |> 
+  # and some flights per week (that don't make a lot of sense)
+  arrange(year, scen_ord) |> 
+  mutate(flights_w = row_number()) 
+  
+hm_latlong_density(NZ_routes, ll = "long", 
+                   freq = freq_fc,
+                   bar_deg = 0.5, resolution_deg = 0.1)
+
+
 ## ----createBuffer-------------------------------------------------------------
 # using your own shp file 
 # NZ_Buller <- sf::read_sf("...../territorial-authority-2020-clipped-generalised.shp") %>% 
