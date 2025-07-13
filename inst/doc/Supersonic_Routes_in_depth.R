@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -25,7 +25,7 @@ hm_clean_cache() #start without cache
 aircraft <- make_aircraft(warn = FALSE)
 airports <- make_airports(crs = crs_Pacific)
 
-options("quiet"= 2) # for a little reporting
+options("himach.verbosity"= 2) # for a little reporting
 # how long does it take with an empty cache?
 system.time(
   routes <- find_route(aircraft[1, ],
@@ -175,7 +175,7 @@ hm_latlong_density <- function(rt, # route dataset created earlier
   if (return_data) return(rt) else return(g)
 }
 
-## ----density_examples---------------------------------------------------------
+## ----density_examples, fig.width=7--------------------------------------------
 # simple case with default 1 flight/week frequency
 hm_latlong_density(NZ_routes, facet_rows = NULL, facet_cols = vars(acID),
                    bar_deg = 0.5, resolution_deg = 0.1)
@@ -214,7 +214,7 @@ aircraft <- make_aircraft(warn = FALSE)
 airports <- make_airports(crs = crs_Pacific)
 
 # run the same route, but with the avoid region
-options("quiet"= 2) #just the progress bar
+options("himach.verbosity"= 2) #just the progress bar
 ac <- aircraft[c(1, 4), ]$id
 routes <- find_routes(ac, 
                       data.frame(ADEP = "NZAA", ADES = "NZDN"),
@@ -242,37 +242,37 @@ map_routes(NZ_coast, routes, show_route = "aircraft",
 
 
 ## ----buffers in s2, fig.width=7, eval = FALSE---------------------------------
-#  gr <- s2::s2_data_countries(c("Greenland", "Canada", "Iceland"))
-#  gr_buffer_s2 <- s2::s2_buffer_cells(gr, distance = 50000, max_cells = 20000) %>%
-#     st_as_sfc()
-#  m_s2 <- ggplot(st_transform(gr_buffer_s2, crs_Atlantic)) + geom_sf(fill = "grey40") +
-#     geom_sf(data = st_transform(st_as_sfc(gr), crs_Atlantic))
-#  
-#  sf_use_s2(FALSE) # to be sure
-#  gr_transf <- gr %>%
-#     st_as_sfc() %>%
-#     st_transform(crs_Atlantic)
-#  gr_t_buffer <- gr_transf %>%
-#     st_buffer(dist = 50000)
-#  m_old <- ggplot(gr_t_buffer) + geom_sf(fill = "grey40") + geom_sf(data = gr_transf)
-#  
-#  cowplot::plot_grid(m_old, m_s2, labels = c("bad", "good"),
-#                     ncol = 1)
-#  
+# gr <- s2::s2_data_countries(c("Greenland", "Canada", "Iceland"))
+# gr_buffer_s2 <- s2::s2_buffer_cells(gr, distance = 50000, max_cells = 20000) %>%
+#    st_as_sfc()
+# m_s2 <- ggplot(st_transform(gr_buffer_s2, crs_Atlantic)) + geom_sf(fill = "grey40") +
+#    geom_sf(data = st_transform(st_as_sfc(gr), crs_Atlantic))
+# 
+# sf_use_s2(FALSE) # to be sure
+# gr_transf <- gr %>%
+#    st_as_sfc() %>%
+#    st_transform(crs_Atlantic)
+# gr_t_buffer <- gr_transf %>%
+#    st_buffer(dist = 50000)
+# m_old <- ggplot(gr_t_buffer) + geom_sf(fill = "grey40") + geom_sf(data = gr_transf)
+# 
+# cowplot::plot_grid(m_old, m_s2, labels = c("bad", "good"),
+#                    ncol = 1)
+# 
 
 ## ----Island Example, fig.width=7, eval = FALSE--------------------------------
-#  sf::sf_use_s2(TRUE)
-#  hires <- sf::st_as_sf(rnaturalearthhires::countries10) %>%
-#    filter(NAME %in% c("Greenland", "Canada", "Iceland"))
-#  hires_buffer_s2 <- s2::s2_buffer_cells(hires, distance = 50000, max_cells = 20000) %>%
-#     st_as_sfc()
-#  m_hires <- ggplot(st_transform(hires_buffer_s2, crs_Atlantic)) +
-#    geom_sf(fill = "grey40") +
-#     geom_sf(data = st_transform(hires, crs_Atlantic))
-#  
-#  cowplot::plot_grid(m_s2, m_hires, labels = c("good", "better"),
-#                     ncol = 1)
-#  
+# sf::sf_use_s2(TRUE)
+# hires <- sf::st_as_sf(rnaturalearthhires::countries10) %>%
+#   filter(NAME %in% c("Greenland", "Canada", "Iceland"))
+# hires_buffer_s2 <- s2::s2_buffer_cells(hires, distance = 50000, max_cells = 20000) %>%
+#    st_as_sfc()
+# m_hires <- ggplot(st_transform(hires_buffer_s2, crs_Atlantic)) +
+#   geom_sf(fill = "grey40") +
+#    geom_sf(data = st_transform(hires, crs_Atlantic))
+# 
+# cowplot::plot_grid(m_s2, m_hires, labels = c("good", "better"),
+#                    ncol = 1)
+# 
 
 ## ----echo = FALSE-------------------------------------------------------------
 #for tidiness remove the temp file now 

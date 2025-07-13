@@ -4,7 +4,7 @@
 \name{himach-package}
 \alias{himach}
 \alias{himach-package}
-\title{himach: High Mach Finds Routes for Supersonic Aircraft}
+\title{himach: Find Routes for Supersonic Aircraft}
 \description{
 For supersonic aircraft, flying subsonic over land, find the best route between airports. Allow for coastal buffer and potentially closed regions. Use a minimal model of aircraft performance: the focus is on time saved versus subsonic flight, rather than on vertical flight profile. For modelling and forecasting, not for planning your flight!
 }
@@ -12,6 +12,7 @@ For supersonic aircraft, flying subsonic over land, find the best route between 
 Useful links:
 \itemize{
   \item \url{https://github.com/david6marsh/himach}
+  \item \url{https://david6marsh.github.io/himach/}
   \item Report bugs at \url{https://github.com/david6marsh/himach/issues}
 }
 

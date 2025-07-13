@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -119,7 +119,7 @@ ggplot(NZ_buffer30) +
 
 
 ## ----simple_route-------------------------------------------------------------
-options("quiet" = 4) #for some output
+options("himach.verbosity" = 4) #for some output
 # from Auckland to Christchurch
 ap2 <- make_AP2("NZAA","NZCH",airports)
 
@@ -135,7 +135,7 @@ routes <- find_route(aircraft[4,],
 
 
 ## ----find_multiple_routes-----------------------------------------------------
-options("quiet" = 2) # anything more than 1 is messy, because of the progress bar
+options("himach.verbosity" = 2) # anything more than 1 is messy, because of the progress bar
 ap2 <- matrix(c("NZAA","NZCH","NZAA","NZDN","NZGS","NZCH"), 
               ncol = 2, byrow = TRUE)
 ac <- aircraft[c(1,4), ]$id
