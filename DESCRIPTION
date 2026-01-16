@@ -1,7 +1,7 @@
 Type: Package
 Package: himach
 Title: Find Routes for Supersonic Aircraft
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     c(person(given = "David",
            family = "Marsh",
@@ -36,10 +36,10 @@ Language: en-GB
 LazyData: true
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-07-12 14:04:40 UTC; david
+Packaged: 2026-01-16 09:27:39 UTC; david
 Author: David Marsh [aut, cre],
   Enrico Spinielli [ctb],
   EUROCONTROL [fnd, cph]
 Maintainer: David Marsh <david6marsh@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-07-13 16:00:02 UTC
+Date/Publication: 2026-01-16 09:50:02 UTC
